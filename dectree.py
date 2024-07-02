@@ -74,6 +74,8 @@ new_case = {
     "Symptom_17": "none"
 }
 
+df1=pd.read_csv("symptom_Description.csv")
 # Classify the new test case
 predicted_disease = classify_new_case(clf, label_encoders, new_case)
 print("\nPredicted Disease for the test case:", predicted_disease)
+print("\ndisease description:",df1[predicted_disease])
