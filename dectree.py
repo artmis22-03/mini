@@ -75,13 +75,12 @@ new_case = {
 }
 
 df1=pd.read_csv("symptom_Description.csv")
-dis=df1['Disease']
+# print(df1)
+dfdict = df1.set_index('Disease').T.to_dict('list')
 # print(dis)
-print(dis[6])
+# print(dis[6])
 # Classify the new test case
 predicted_disease = classify_new_case(clf, label_encoders, new_case)
+
 print("\nPredicted Disease for the test case:", predicted_disease)
-if predicted_disease in dis:
-    print("\nDisease description:", df1.loc[predicted_disease])
-else:
-    print("\nNo description found for the predicted disease:", predicted_disease)
+print(dfdict[predicted_disease][0])
