@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
+import pickle
 from sklearn.tree import DecisionTreeClassifier, export_text
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
@@ -28,21 +30,34 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 clf = DecisionTreeClassifier(random_state=42)
 clf.fit(X_train, y_train)
 
-# Display the decision tree
-tree_rules = export_text(clf, feature_names=list(X.columns))
-print("Decision Tree Rules:\n")
-print(tree_rules)
+# Save the decision tree classifier to a pkl file
+with open('decision_tree_model.pkl', 'wb') as file:
+    pickle.dump(clf, file)
 
-# Predict on the test set
-y_pred = clf.predict(X_test)
+# Initialize and train the KNN classifier
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
 
-# Generate the classification report
-report = classification_report(y_test, y_pred, target_names=label_encoders['Disease'].classes_)
-print("\nClassification Report:\n")
-print(report)
+# Save the KNN classifier to a pkl file
+with open('knn_model.pkl', 'wb') as file:
+    pickle.dump(knn, file)
+
+# Predict on the test set using the decision tree classifier
+y_pred_tree = clf.predict(X_test)
+# Generate the classification report for the decision tree classifier
+report_tree = classification_report(y_test, y_pred_tree, target_names=label_encoders['Disease'].classes_)
+print("\nDecision Tree Classification Report:\n")
+print(report_tree)
+
+# Predict on the test set using the KNN classifier
+y_pred_knn = knn.predict(X_test)
+# Generate the classification report for the KNN classifier
+report_knn = classification_report(y_test, y_pred_knn, target_names=label_encoders['Disease'].classes_)
+print("\nKNN Classification Report:\n")
+print(report_knn)
 
 # Function to classify a new test case
-def classify_new_case(clf, label_encoders, new_case):
+def classify_new_case(model, label_encoders, new_case):
     # Create a DataFrame for the new case
     new_case_df = pd.DataFrame([new_case])
     
@@ -56,7 +71,7 @@ def classify_new_case(clf, label_encoders, new_case):
         new_case_df[column] = le.transform(new_case_df[column])
     
     # Predict the disease
-    prediction = clf.predict(new_case_df)
+    prediction = model.predict(new_case_df)
     
     # Decode the prediction
     disease = label_encoders['Disease'].inverse_transform(prediction)
@@ -83,20 +98,28 @@ new_case = {
     "Symptom_17": "none"
 }
 
-# Classify the new test case
-predicted_disease = classify_new_case(clf, label_encoders, new_case)
+# Classify the new test case using the decision tree classifier
+predicted_disease_tree = classify_new_case(clf, label_encoders, new_case)
+print("\nPredicted Disease for the test case using Decision Tree:", predicted_disease_tree)
 
-print("\nPredicted Disease for the test case:", predicted_disease)
+# Classify the new test case using the KNN classifier
+predicted_disease_knn = classify_new_case(knn, label_encoders, new_case)
+print("\nPredicted Disease for the test case using KNN:", predicted_disease_knn)
 
 # Load the symptom description data
 df1 = pd.read_csv("symptom_Description.csv")
 dfdict = df1.set_index('Disease').T.to_dict('list')
 
-# Print the description of the predicted disease
-print(dfdict[predicted_disease][0])
+# Print the description of the predicted disease using the decision tree classifier
+print("\nSymptom description for predicted disease (Decision Tree):")
+print(dfdict[predicted_disease_tree][0])
+
+# Print the description of the predicted disease using the KNN classifier
+print("\nSymptom description for predicted disease (KNN):")
+print(dfdict[predicted_disease_knn][0])
 
 # Debug: Verify the encoding of the new case
-# encoded_new_case = {}
-# for column in new_case:
-#     encoded_new_case[column] = label_encoders[column].transform([new_case[column]])[0]
-# print("\nEncoded New Case:", encoded_new_case)
+encoded_new_case = {}
+for column in new_case:
+    encoded_new_case[column] = label_encoders[column].transform([new_case[column]])[0]
+print("\nEncoded New Case:", encoded_new_case)

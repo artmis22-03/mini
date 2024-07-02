@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.tree import DecisionTreeClassifier, export_text
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
@@ -24,17 +24,12 @@ y = df['Disease']
 # Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Initialize and train the decision tree classifier
-clf = DecisionTreeClassifier(random_state=42)
-clf.fit(X_train, y_train)
-
-# Display the decision tree
-tree_rules = export_text(clf, feature_names=list(X.columns))
-print("Decision Tree Rules:\n")
-print(tree_rules)
+# Initialize and train the KNN classifier
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
 
 # Predict on the test set
-y_pred = clf.predict(X_test)
+y_pred = knn.predict(X_test)
 
 # Generate the classification report
 report = classification_report(y_test, y_pred, target_names=label_encoders['Disease'].classes_)
@@ -42,7 +37,7 @@ print("\nClassification Report:\n")
 print(report)
 
 # Function to classify a new test case
-def classify_new_case(clf, label_encoders, new_case):
+def classify_new_case(knn, label_encoders, new_case):
     # Create a DataFrame for the new case
     new_case_df = pd.DataFrame([new_case])
     
@@ -56,7 +51,7 @@ def classify_new_case(clf, label_encoders, new_case):
         new_case_df[column] = le.transform(new_case_df[column])
     
     # Predict the disease
-    prediction = clf.predict(new_case_df)
+    prediction = knn.predict(new_case_df)
     
     # Decode the prediction
     disease = label_encoders['Disease'].inverse_transform(prediction)
@@ -84,7 +79,7 @@ new_case = {
 }
 
 # Classify the new test case
-predicted_disease = classify_new_case(clf, label_encoders, new_case)
+predicted_disease = classify_new_case(knn, label_encoders, new_case)
 
 print("\nPredicted Disease for the test case:", predicted_disease)
 
