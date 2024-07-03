@@ -53,6 +53,12 @@ for i in range(1, len(alls)):
 # Dropdown to choose model
 model_choice = st.selectbox('Choose the model', ('Decision Tree', 'KNN'))
 
+import pyttsx3
+
+disease = ""
+des=""
+# Initialize the pyttsx3 engine
+engine = pyttsx3.init()
 # Predict button
 if st.button('Predict Disease'):
     if model_choice == 'Decision Tree':
@@ -64,6 +70,21 @@ if st.button('Predict Disease'):
     
     st.subheader('Predicted Disease')
     st.write(predicted_disease)
-    
+    disease=predicted_disease
     st.subheader('Disease Description')
     st.write(description)
+    des=description
+
+# def speak(dis,des):
+#     engine.say(dis)
+#     engine.say(des)
+#     engine.runAndWait()    
+
+# if st.button('speak'):
+#     speak(disease,des)
+
+
+# Convert text to speech
+# engine.say("I love Python for text to speech, and you?")
+# engine.runAndWait()
+

@@ -22,7 +22,7 @@ X = df.drop('Disease', axis=1)
 y = df['Disease']
 
 # Split the dataset into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.8)
 
 # Initialize and train the decision tree classifier
 clf = DecisionTreeClassifier(random_state=42)
@@ -64,13 +64,13 @@ def classify_new_case(clf, label_encoders, new_case):
 
 # Example test case
 new_case = {
-    "Symptom_1": "chills",
-    "Symptom_2": "joint_pain",
-    "Symptom_3": "vomiting",
+    "Symptom_1": "itching",
+    "Symptom_2": "vomiting",
+    "Symptom_3": "weight_loss",
     "Symptom_4": "fatigue",
     "Symptom_5": "high_fever",
-    "Symptom_6": "headache",
-    "Symptom_7": "nausea",
+    "Symptom_6": "yellowish_skin",
+    "Symptom_7": "abdominal_pain",
     "Symptom_8": "none",
     "Symptom_9": "none",
     "Symptom_10": "none",
