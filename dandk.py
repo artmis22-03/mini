@@ -24,7 +24,7 @@ X = df.drop('Disease', axis=1)
 y = df['Disease']
 
 # Split the dataset into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.8)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 
 # Initialize and train the decision tree classifier
 clf = DecisionTreeClassifier(random_state=42)

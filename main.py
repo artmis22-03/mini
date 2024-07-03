@@ -11,6 +11,11 @@ with open('decision_tree_model.pkl', 'rb') as file:
 with open('knn_model.pkl', 'rb') as file:
     knn = pickle.load(file)
 
+with open('logistic_regression_model.pkl', 'rb') as file:
+    log = pickle.load(file)
+
+with open('random_forest.pkl', 'rb') as file:
+    rf = pickle.load(file)
 # Load the encoders
 df = pd.read_csv('dataset.csv')
 label_encoders = {}
@@ -51,20 +56,24 @@ for i in range(1,18):
 for i in range(1, len(alls)):
     symptoms[f'Symptom_{i}'] = alls[i-1]
 # Dropdown to choose model
-model_choice = st.selectbox('Choose the model', ('Decision Tree', 'KNN'))
+model_choice = st.selectbox('Choose the model', ('Logistic regression','Random Foresrt','Decision Tree', 'KNN'))
 
-import pyttsx3
+# import pyttsx3
 
 disease = ""
 des=""
 # Initialize the pyttsx3 engine
-engine = pyttsx3.init()
+# engine = pyttsx3.init()
 # Predict button
 if st.button('Predict Disease'):
     if model_choice == 'Decision Tree':
         predicted_disease = classify_new_case(clf, label_encoders, symptoms)
-    else:
+    elif model_choice == 'KNN':
         predicted_disease = classify_new_case(knn, label_encoders, symptoms)
+    elif model_choice == 'Random Foresrt':
+        predicted_disease = classify_new_case(rf, label_encoders, symptoms)
+    else:
+        predicted_disease = classify_new_case(log, label_encoders, symptoms)
     
     description = dfdict[predicted_disease][0]
     
